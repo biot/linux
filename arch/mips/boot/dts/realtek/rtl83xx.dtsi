@@ -1,0 +1,95 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+/ {
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	compatible = "realtek,rtl83xx-soc";
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		frequency = <500000000>;
+
+		cpu@0 {
+			compatible = "mips,mips4KEc";
+			reg = <0>;
+		};
+	};
+
+	memory {
+		device_type = "memory";
+		reg = <0x0 0x8000000>;
+	};
+
+	aliases {
+		serial0 = &uart0;
+		serial1 = &uart1;
+	};
+
+	soc {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0x0 0xb8000000 0x10000>;
+
+		spiflash: spi {
+			compatible = "realtek,rtl8380-spiflash";
+			reg = <0x1200 0x100>;
+
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			status = "disabled";
+		};
+
+		uart0: uart@2000 {
+			compatible = "ns16550a";
+			reg = <0x2000 0x100>;
+
+			clock-frequency = <200000000>;
+
+			interrupt-parent = <&cpuintc>;
+			interrupts = <3>;
+
+			reg-io-width = <1>;
+			reg-shift = <2>;
+			fifo-size = <1>;
+			no-loopback-test;
+
+			status = "disabled";
+		};
+
+		uart1: uart@2100 {
+			compatible = "ns16550a";
+			reg = <0x2100 0x100>;
+
+			clock-frequency = <200000000>;
+
+			interrupt-parent = <&rtlintc>;
+			interrupts = <30>;
+
+			reg-io-width = <1>;
+			reg-shift = <2>;
+			fifo-size = <1>;
+			no-loopback-test;
+
+			status = "disabled";
+		};
+
+		cpuintc: cpuintc {
+			compatible = "mti,cpu-interrupt-controller";
+			#address-cells = <0>;
+			#interrupt-cells = <1>;
+			interrupt-controller;
+		};
+
+		rtlintc: rtlintc {
+			compatible = "realtek,rtl8380-intc";
+			#address-cells = <0>;
+			#interrupt-cells = <1>;
+			interrupt-controller;
+			reg = <0x3000 0x20>;
+		};
+	};
+};

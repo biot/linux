@@ -1,0 +1,77 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+/dts-v1/;
+
+#include "rtl83xx.dtsi"
+
+/ {
+	model = "Cisco SG220-26";
+	compatible = "cisco,sg220-26", "realtek,rtl83xx-soc";
+
+	chosen {
+		bootargs = "console=ttyS0,9600";
+	};
+};
+
+&uart0 {
+	status = "okay";
+};
+
+&spiflash {
+	status = "okay";
+
+	flash@0 {
+		compatible = "jedec,spi-nor";
+		spi-max-frequency = <10000000>;
+		reg = <0>;
+		m25p,fast-read;
+		broken-flash-reset;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			loader: partition@0 {
+				label = "boot";
+				reg = <0x0 0x80000>;
+				read-only;
+			};
+
+			bdinfo: partition@1 {
+				label = "bdinfo";
+				reg = <0x80000 0x10000>;
+				read-only;
+			};
+
+			sysinfo: partition@2 {
+				label = "sysinfo";
+				reg = <0x90000 0x10000>;
+				read-only;
+			};
+
+			jffs2_cfg: partition@3 {
+				label = "jffs2 cfg";
+				reg = <0xa0000 0x400000>;
+				read-only;
+			};
+
+			jffs2_log: partition@4 {
+				label = "jffs2 log";
+				reg = <0x4a0000 0x100000>;
+				read-only;
+			};
+
+			runtime: partition@5 {
+				label = "runtime";
+				reg = <0x5a0000 0xd30000>;
+				read-only;
+			};
+
+			runtime2: partition@6 {
+				label = "runtime2";
+				reg = <0x12d0000 0xd30000>;
+			};
+		};
+	};
+};
