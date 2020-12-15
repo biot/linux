@@ -62,3 +62,10 @@ config SPI_INTEL_SPI_PLATFORM
 
 	  To compile this driver as a module, choose M here: the module
 	  will be called intel-spi-platform.
+
+config SPI_REALTEK_RTL8380
+	tristate "Realtek RTL8380 SPI flash controller"
+	depends on MACH_REALTEK
+	help
+	  This enables support for the SPI flash controller in the Realtek
+	  RTL8380 series SoCs.
