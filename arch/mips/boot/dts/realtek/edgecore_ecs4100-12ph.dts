@@ -60,13 +60,8 @@
 
 			runtime: partition@200000 {
 				label = "runtime";
-				reg = <0x200000 0x500000>;
-			};
-
-			runtime2: partition@500000 {
-				label = "runtime2";
-				reg = <0x500000 0x2000000>;
-			};
-		};
+				reg = <0x200000 0x1e00000>;
+			};	
+	};
 	};
 };

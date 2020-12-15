@@ -12,10 +12,9 @@
 	};
 };
 
-/*
 &ethernet0 {
 	mdio-bus {
-		compatible = "realtek,rtl83xx-mdio";
+		compatible = "realtek,rtl8380-mdio";
 		regmap = <&ethernet0>;
 		#address-cells = <1>;
 		#size-cells = <0>;
@@ -54,4 +53,3 @@
 		};
 	};
 };
-*/

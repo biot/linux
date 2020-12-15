@@ -1,5 +1,18 @@
 // SPDX-License-Identifier: GPL-2.0-or-later OR BSD-2-Clause
 
+#define INTERNAL_PHY(n) \
+	phy##n: ethernet-phy@##n { \
+		reg = <##n>; \
+		compatible = "ethernet-phy-ieee802.3-c22"; \
+		phy-is-integrated; \
+	};
+
+#define EXTERNAL_PHY(n) \
+	phy##n: ethernet-phy@##n { \
+		reg = <##n>; \
+		compatible = "ethernet-phy-ieee802.3-c22"; \
+	};
+
 / {
 	#address-cells = <1>;
 	#size-cells = <1>;
@@ -81,8 +94,8 @@
 		};
 	};
 
-	switch_bus: switch-bus@bb000000 {
-		compatible = "simple-bus";
+	switch_bus: switch-bus@1b000000 {
+		compatible = "simple-bus", "syscon";
 		#address-cells = <1>;
 		#size-cells = <1>;
 		ranges = <0x0 0x1b000000 0x10000>;

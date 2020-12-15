@@ -12,46 +12,32 @@
 	};
 };
 
-/*
-&ethernet0 {
+&switch_bus {
+	ethernet0: ethernet@0 {
+		status = "okay";
+		compatible = "realtek,rtl8382-eth";
+		reg = <0x0 0x10000>;
+		interrupt-parent = <&intc>;
+		interrupts = <24>;
+		interrupt-cells = <1>;
+		phy-mode = "internal";
+		fixed-link {
+			speed = <1000>;
+			full-duplex;
+		};
+	};
 	mdio-bus {
-		compatible = "realtek,rtl83xx-mdio";
-		regmap = <&ethernet0>;
+		compatible = "realtek,rtl8382-mdio";
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-		phy8: ethernet-phy@8 {
-			reg = <8>;
-			compatible = "ethernet-phy-ieee802.3-c22";
-		};
-		phy9: ethernet-phy@9 {
-			reg = <9>;
-			compatible = "ethernet-phy-ieee802.3-c22";
-		};
-		phy10: ethernet-phy@10 {
-			reg = <10>;
-			compatible = "ethernet-phy-ieee802.3-c22";
-		};
-		phy11: ethernet-phy@11 {
-			reg = <11>;
-			compatible = "ethernet-phy-ieee802.3-c22";
-		};
-		phy12: ethernet-phy@12 {
-			reg = <12>;
-			compatible = "ethernet-phy-ieee802.3-c22";
-		};
-		phy13: ethernet-phy@13 {
-			reg = <13>;
-			compatible = "ethernet-phy-ieee802.3-c22";
-		};
-		phy14: ethernet-phy@14 {
-			reg = <14>;
-			compatible = "ethernet-phy-ieee802.3-c22";
-		};
-		phy15: ethernet-phy@15 {
-			reg = <15>;
-			compatible = "ethernet-phy-ieee802.3-c22";
-		};
+		EXTERNAL_PHY(8)
+		EXTERNAL_PHY(9)
+		EXTERNAL_PHY(10)
+		EXTERNAL_PHY(11)
+		EXTERNAL_PHY(12)
+		EXTERNAL_PHY(13)
+		EXTERNAL_PHY(14)
+		EXTERNAL_PHY(15)
 	};
 };
-*/

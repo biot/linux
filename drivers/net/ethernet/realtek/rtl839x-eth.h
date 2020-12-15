@@ -1,0 +1,178 @@
+// SPDX-License-Identifier: GPL-2.0-only
+#ifndef _RTL839X_ETH_H
+#define _RTL839X_ETH_H
+
+#include "rtl83xx-eth.h"
+
+/* Reset */
+#define RTL839X_RST_GLB_CTRL					0x14
+#define   _RTL839X_SW_NIC_RST					BIT(3)
+#define   _RTL839X_SW_Q_RST					BIT(2)
+
+/* MAC control */
+#define RTL839X_MAC_GLB_CTRL					0x02a8
+#define   _LINKUP_DLY_EN					BIT(30)
+#define   _CPU_CRC_RC_EN					BIT(29)
+#define   _MAC_DROP_48PASS1_EN					BIT(28)
+#define   _MAX_RETX_SEL						BIT(27)
+#define   _EFUSE_EN						BIT(26)
+#define   _CPU_GATCLK_EN					BIT(25)
+#define   _INBAND_ABORT_SEL					BIT(24)
+#define   _CPU_CLK_SEL						BIT(22)
+#define   _DDR_CLK_SEL						19
+#define   _IOL_PAUSE_EN						BIT(18)
+#define   _LATE_COLI_DROP_EN					BIT(17)
+#define   _IOL_LEN_ERR_EN					BIT(16)
+#define   _IOL_MAX_RETRY_EN					BIT(15)
+#define   _LIMIT_PAUSE_EN					BIT(14)
+#define   _BKOFF_SPDUP						BIT(13)
+#define   _BKOFF_SEL						BIT(11)
+#define   _HALF_48PASS1_EN					BIT(10)
+#define   _BKPRES_MTHD_SEL					BIT(9)
+#define   _DEFER_IPG_SEL					7
+#define   _IPG_1G_COMPS_EN					BIT(6)
+#define   _IPG_1G_SEL						BIT(5)
+#define   _IPG_10G_COMPS_EN					BIT(4)
+#define   _IPG_10G_SEL						BIT(3)
+#define   _PHY_ABLTY_GET_SEL					BIT(1)
+#define   _PHY_ACCESS_SEL					BIT(0)
+#define RTL839X_MAC_EFUSE_CTRL					0x02ac
+#define   _PKT_BUF_SIZE_SEL					BIT(7)
+
+/* Scheduling */
+#define RTL839X_SCHED_LB_TICK_TKN_CTRL				0x60f8
+#define   _SCHED_TICK_PERIOD_10G				24
+#define   _SCHED_BYTE_PER_TKN_10G				16
+#define   _SCHED_TICK_PERIOD					8
+#define   _SCHED_BYTE_PER_TKN					0
+
+/* Storm control */
+#define RTL839X_STORM_CTRL_LB_TICK_TKN_CTRL_1G			0x1808
+#define   _STORM_TICK_PERIOD					10
+#define   _STORM_TKN						0
+#define RTL839X_STORM_CTRL_LB_TICK_TKN_CTRL_10G			0x1804
+#define   _STORM_TICK_PERIOD_10G				10
+#define   _STORM_TKN_10G					0
+
+/* Protocol storm - pps */
+#define RTL839X_STORM_CTRL_SPCL_LB_TICK_TKN_CTRL		0x2000
+#define   _STORM_SPCL_TICK_PERIOD				0
+
+/* ACL Policer - bps */
+#define RTL839X_METER_LB_TICK_TKN_CTRL(idx)			(0x1308 + ((idx) << 2))
+#define   _METER_TICK_PERIOD					16
+#define   _METER_TKN						16
+
+/* Ingress bandwidth control */
+#define RTL839X_IGR_BWCTRL_LB_TICK_TKN_CTRL_1G			0x1608
+#define   _BWCTRL_TICK_PERIOD					11
+#define   _BWCTRL_TKN						0
+#define RTL839X_IGR_BWCTRL_LB_TICK_TKN_CTRL_10G			0x1604
+#define   _BWCTRL_TICK_PERIOD_10G				11
+#define   _BWCTRL_TKN_10G					0
+
+#define RTL839X_EEEP_RX_TIMER_100M_CTRL				0x047c
+#define   _EEEP_RX_WAKE_TIMER_100M				24
+#define   _EEEP_RX_MIN_SLEEP_TIMER_100M				16
+#define   _EEEP_RX_SLEEP_TIMER_100M				9
+#define   _EEEP_RX_PAUSE_ON_TIMER_100M				0
+#define RTL839X_EEEP_RX_TIMER_500M_CTRL0			0x0480
+#define   _EEEP_RX_WAKE_TIMER_500M				24
+#define   _EEEP_RX_MIN_SLEEP_TIMER_500M				16
+#define   _EEEP_RX_SLEEP_TIMER_500M				8
+#define   _EEEP_RX_PAUSE_ON_TIMER_500M				0
+#define RTL839X_EEEP_RX_TIMER_GIGA_CTRL0			0x0488
+#define   _EEEP_RX_WAKE_TIMER_GIGA				24
+#define   _EEEP_RX_MIN_SLEEP_TIMER_GIGA				16
+#define   _EEEP_RX_SLEEP_TIMER_GIGA				8
+#define   _EEEP_RX_PAUSE_ON_TIMER_GIGA				0
+
+#define RTL839X_MAC_ADDR					0x02b4
+
+/* NIC DMA */
+#define RTL839X_DMA_IF_RX_BASE_DESC_ADDR_CTRL(ring)		(0x780c + (ring << 2))
+#define RTL839X_DMA_IF_TX_BASE_DESC_ADDR_CTRL(ring)		(0x784c + (ring << 2))
+#define RTL839X_DMA_IF_RX_RING_SIZE(ring)			(0x6038 + ((ring >> 3) << 2))
+#define RTL839X_DMA_IF_RX_RING_CNTR(ring)			(0x603c + ((ring >> 3) << 2))
+#define RTL839X_DMA_IF_RX_CUR(ring)				(0x782c + (ring << 2))
+#define RTL839X_DMA_IF_INTR_MSK					0x7864
+#define   _RTL839X_DMAIFINTRMSK_NTFY_DONE			BIT(22)
+#define   _RTL839X_DMAIFINTRMSK_NTFY_BUF_RUN_OUT		BIT(21)
+#define   _RTL839X_DMAIFINTRMSK_LOCAL_NTFY_BUF_RUN_OUT		BIT(20)
+#define   _RTL839X_DMAIFINTRMSK_TX_ALL_DONE			18
+#define   _RTL839X_DMAIFINTRMSK_TX_DONE				16
+#define   _RTL839X_DMAIFINTRMSK_RX_DONE				8
+#define   _RTL839X_DMAIFINTRMSK_RX_RUN_OUT			0
+#define RTL839X_DMA_IF_INTR_STS					0x7868
+#define   _RTL839X_DMAIFINTRSTS_NTFY_DONE			BIT(22)
+#define   _RTL839X_DMAIFINTRSTS_NTFY_BUF_RUN_OUT		BIT(21)
+#define   _RTL839X_DMAIFINTRSTS_LOCAL_NTFY_BUF_RUN_OUT		BIT(20)
+#define   _RTL839X_DMAIFINTRSTS_TX_ALL_DONE			18
+#define   _RTL839X_DMAIFINTRSTS_TX_DONE				16
+#define   _RTL839X_DMAIFINTRSTS_RX_DONE				8
+#define   _RTL839X_DMAIFINTRSTS_RX_RUN_OUT			0
+#define RTL839X_DMA_IF_CTRL					0x786c
+#define   _RTL839X_DMAIF_RX_TRUNCATE_LEN			5
+#define   _RTL839X_DMAIF_RX_TRUNCATE_EN				BIT(4)
+#define   _RTL839X_DMAIF_TX_EN					BIT(3)
+#define   _RTL839X_DMAIF_RX_EN					BIT(2)
+#define   _RTL839X_DMAIF_TX_FETCH				BIT(1)
+#define   _RTL839X_DMAIF_TX_BUSY				BIT(0)
+
+
+/* Tables */
+#define RTL839X_TBL_ACCESS_L2_CTRL				0x1180
+#define RTL839X_TBL_ACCESS_L2_DATA				0x1184
+#define RTL839X_TBL_ACCESS_CTRL_0				0x1190
+#define RTL839X_TBL_ACCESS_DATA_0				0x1184
+#define RTL839X_TBL_ACCESS_CTRL_1				0x6b80
+#define RTL839X_TBL_ACCESS_DATA_1				0x6b84
+#define RTL839X_TBL_ACCESS_CTRL_2				0x611c
+#define RTL839X_TBL_ACCESS_DATA_2				0x6120
+
+/* L2 table flush control */
+#define RTL839X_L2_TBL_FLUSH_CTRL				0x3ba0
+#define   _RTL839X_L2FLUSH_STS					BIT(28)
+#define   _RTL839X_L2FLUSH_ACT					BIT(27)
+#define   _RTL839X_L2FLUSH_FVID_CMP				BIT(26)
+#define   _RTL839X_L2FLUSH_PORT_CMP				BIT(25)
+#define   _RTL839X_L2FLUSH_ENTRY_TYPE				BIT(24)
+#define   _RTL839X_L2FLUSH_FVID					12
+#define   _RTL839X_L2FLUSH_PORT					6
+#define   _RTL839X_L2FLUSH_REPLACING_PORT			0
+
+/* MAC control */
+#define RTL839X_MAC_LINK_STS					0x0390
+#define RTL839X_MAC_LINK_SPD_STS				0x03a0
+#define RTL839X_MAC_LINK_DUP_STS				0x03b0
+#define RTL839X_MAC_TX_PAUSE_STS				0x03b8
+#define RTL839X_MAC_RX_PAUSE_STS				0x03c0
+#define RTL839X_L2_TBL_FLUSH_CTRL				0x3ba0
+#define RTL839X_MAC_PORT_CTRL(port)				(0x8004 + (port << 7))
+#define   _RTL839X_MACPORT_IPG_MIN_RX_SEL			28
+#define   _RTL839X_MACPORT_IPG_LEN				8
+#define   _RTL839X_MACPORT_BYP_TX_CRC				BIT(7)
+#define   _RTL839X_MACPORT_PASS_ALL_MODE_EN			BIT(6)
+#define   _RTL839X_MACPORT_LATE_COLI_THR			4
+#define   _RTL839X_MACPORT_RX_CHK_CRC_EN			BIT(3)
+#define   _RTL839X_MACPORT_BKPRES_EN				BIT(2)
+#define   _RTL839X_MACPORT_TX_EN				BIT(1)
+#define   _RTL839X_MACPORT_RX_EN				BIT(0)
+#define RTL839X_MAC_FORCE_MODE_CTRL(port)			(0x02bc + (port << 2))
+#define   _RTL839X_MACFORCEMODE_FORCE_500M_SPD			BIT(15)
+#define   _RTL839X_MACFORCEMODE_EEEP_1000M_EN			BIT(14)
+#define   _RTL839X_MACFORCEMODE_EEEP_500M_EN			BIT(13)
+#define   _RTL839X_MACFORCEMODE_EEEP_100M_EN			BIT(12)
+#define   _RTL839X_MACFORCEMODE_EEE_10G_EN			BIT(11)
+#define   _RTL839X_MACFORCEMODE_EEE_1000M_EN			BIT(10)
+#define   _RTL839X_MACFORCEMODE_EEE_500M_EN			BIT(9)
+#define   _RTL839X_MACFORCEMODE_EEE_100M_EN			BIT(8)
+#define   _RTL839X_MACFORCEMODE_MAC_FORCE_FC_EN			BIT(7)
+#define   _RTL839X_MACFORCEMODE_RX_PAUSE_EN			BIT(6)
+#define   _RTL839X_MACFORCEMODE_TX_PAUSE_EN			BIT(5)
+#define   _RTL839X_MACFORCEMODE_SPD_SEL				3
+#define   _RTL839X_MACFORCEMODE_DUP_SEL				BIT(2)
+#define   _RTL839X_MACFORCEMODE_FORCE_LINK_EN			BIT(1)
+#define   _RTL839X_MACFORCEMODE_MAC_FORCE_EN			BIT(0)
+
+#endif /* _RTL839X_ETH_H */

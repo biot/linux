@@ -3,6 +3,7 @@
 /dts-v1/;
 
 #include "rtl83xx.dtsi"
+#include "rtl8382.dtsi"
 #include "rtl838x.dtsi"
 #include "rtl8382.dtsi"
 
@@ -11,8 +12,8 @@
 	compatible = "cisco,sg220-26", "realtek,rtl8382-soc";
 
 	chosen {
-		stdout-path = "serial0:9600n8";
-		bootargs = "earlycon console=ttyS0,9600";
+		stdout-path = "serial0:115200";
+		bootargs = "earlycon console=ttyS0,115200";
 	};
 
 	memory@0 {

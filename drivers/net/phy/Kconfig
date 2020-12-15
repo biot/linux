@@ -248,7 +248,7 @@ config QSEMI_PHY
 config REALTEK_PHY
 	tristate "Realtek PHYs"
 	help
-	  Supports the Realtek 821x PHY.
+	  Supports the Realtek RTL81xx/RTL82xx/RTL83xx PHYs.
 
 config RENESAS_PHY
 	tristate "Renesas PHYs"

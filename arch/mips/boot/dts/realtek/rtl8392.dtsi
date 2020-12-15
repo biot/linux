@@ -11,3 +11,33 @@
 		status = "disabled";
 	};
 };
+
+&switch_bus {
+	ethernet0: ethernet@0 {
+		status = "okay";
+		compatible = "realtek,rtl8392-eth";
+		reg = <0x0 0x10000>;
+		interrupt-parent = <&intc>;
+		interrupts = <24>;
+		interrupt-cells = <1>;
+		phy-mode = "internal";
+		fixed-link {
+			speed = <1000>;
+			full-duplex;
+		};
+	};
+	mdio {
+		compatible = "realtek,rtl8392-mdio";
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		EXTERNAL_PHY(0)
+		EXTERNAL_PHY(1)
+		EXTERNAL_PHY(2)
+		EXTERNAL_PHY(3)
+		EXTERNAL_PHY(4)
+		EXTERNAL_PHY(5)
+		EXTERNAL_PHY(6)
+		EXTERNAL_PHY(7)
+	};
+};
