@@ -1,0 +1,43 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+&ethernet0 {
+	mdio-bus {
+		compatible = "realtek,rtl83xx-mdio";
+		regmap = <&ethernet0>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		phy8: ethernet-phy@8 {
+			reg = <8>;
+			compatible = "ethernet-phy-ieee802.3-c22";
+		};
+		phy9: ethernet-phy@9 {
+			reg = <9>;
+			compatible = "ethernet-phy-ieee802.3-c22";
+		};
+		phy10: ethernet-phy@10 {
+			reg = <10>;
+			compatible = "ethernet-phy-ieee802.3-c22";
+		};
+		phy11: ethernet-phy@11 {
+			reg = <11>;
+			compatible = "ethernet-phy-ieee802.3-c22";
+		};
+		phy12: ethernet-phy@12 {
+			reg = <12>;
+			compatible = "ethernet-phy-ieee802.3-c22";
+		};
+		phy13: ethernet-phy@13 {
+			reg = <13>;
+			compatible = "ethernet-phy-ieee802.3-c22";
+		};
+		phy14: ethernet-phy@14 {
+			reg = <14>;
+			compatible = "ethernet-phy-ieee802.3-c22";
+		};
+		phy15: ethernet-phy@15 {
+			reg = <15>;
+			compatible = "ethernet-phy-ieee802.3-c22";
+		};
+	};
+};
