@@ -4,8 +4,6 @@
 	#address-cells = <1>;
 	#size-cells = <1>;
 
-	compatible = "realtek,rtl83xx-soc";
-
 	cpus {
 		#address-cells = <1>;
 		#size-cells = <0>;
@@ -25,6 +23,13 @@
 	aliases {
 		serial0 = &uart0;
 		serial1 = &uart1;
+	};
+
+	cpuintc: cpuintc {
+		compatible = "mti,cpu-interrupt-controller";
+		#address-cells = <0>;
+		#interrupt-cells = <1>;
+		interrupt-controller;
 	};
 
 	soc {
@@ -75,13 +80,6 @@
 			no-loopback-test;
 
 			status = "disabled";
-		};
-
-		cpuintc: cpuintc {
-			compatible = "mti,cpu-interrupt-controller";
-			#address-cells = <0>;
-			#interrupt-cells = <1>;
-			interrupt-controller;
 		};
 
 		rtlintc: rtlintc {
