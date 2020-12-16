@@ -15,7 +15,7 @@
 		};
 	};
 
-	memory {
+	memory@0 {
 		device_type = "memory";
 		reg = <0x0 0x8000000>;
 	};
@@ -38,7 +38,7 @@
 		#size-cells = <1>;
 		ranges = <0x0 0xb8000000 0x10000>;
 
-		spiflash: spi {
+		spiflash: spi@1200 {
 			compatible = "realtek,rtl8380-spiflash";
 			reg = <0x1200 0x100>;
 
@@ -82,7 +82,7 @@
 			status = "disabled";
 		};
 
-		rtlintc: rtlintc {
+		rtlintc: rtlintc@3000 {
 			compatible = "realtek,rtl8380-intc";
 			#address-cells = <0>;
 			#interrupt-cells = <1>;

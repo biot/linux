@@ -39,37 +39,34 @@
 				read-only;
 			};
 
-			bdinfo: partition@1 {
+			bdinfo: partition@80000 {
 				label = "bdinfo";
 				reg = <0x80000 0x10000>;
 				read-only;
 			};
 
-			sysinfo: partition@2 {
+			sysinfo: partition@90000 {
 				label = "sysinfo";
 				reg = <0x90000 0x10000>;
 				read-only;
 			};
 
-			jffs2_cfg: partition@3 {
+			jffs2_cfg: partition@a0000 {
 				label = "jffs2 cfg";
 				reg = <0xa0000 0x400000>;
-				read-only;
 			};
 
-			jffs2_log: partition@4 {
+			jffs2_log: partition@4a0000 {
 				label = "jffs2 log";
 				reg = <0x4a0000 0x100000>;
-				read-only;
 			};
 
-			runtime: partition@5 {
+			runtime: partition@5a0000 {
 				label = "runtime";
 				reg = <0x5a0000 0xd30000>;
-				read-only;
 			};
 
-			runtime2: partition@6 {
+			runtime2: partition@12d0000 {
 				label = "runtime2";
 				reg = <0x12d0000 0xd30000>;
 			};
