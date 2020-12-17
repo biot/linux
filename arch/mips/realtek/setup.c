@@ -13,22 +13,9 @@
 
 extern struct realtek_soc_info soc_info;
 
-static void realtek_restart(char *command)
-{
-	if (soc_info.family == RTL8380_FAMILY_ID) {
-		/* Reset Global Control1 Register */
-		writel(1, RTL8380_RST_GLB_CTRL_1);
-	} else if (soc_info.family == RTL8390_FAMILY_ID) {
-		/* If calling reset vector fails, reset entire chip */
-		writel(0xFFFFFFFF, RTL8390_RST_GLB_CTRL);
-	}
-}
-
 void __init plat_mem_setup(void)
 {
 	set_io_port_base(KSEG1);
-
-	_machine_restart = realtek_restart;
 }
 
 void __init plat_time_init(void)
