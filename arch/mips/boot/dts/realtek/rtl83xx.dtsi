@@ -92,4 +92,11 @@
 			reg = <0x3000 0x20>;
 		};
 	};
+
+	switch_bus: switch-bus@bb000000 {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0x0 0xbb000000 0x10000>;
+	};
 };
