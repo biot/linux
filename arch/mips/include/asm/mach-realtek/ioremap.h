@@ -2,14 +2,29 @@
 #ifndef _RTL8380_IOREMAP_H_
 #define _RTL8380_IOREMAP_H_
 
+#include <linux/of.h>
+
 static inline int is_rtl8380_internal_registers(phys_addr_t offset)
 {
-	/* IO-Block */
-	if (offset >= 0xb8000000 && offset < 0xb9000000)
-		return 1;
-	/* Switch block */
-	if (offset >= 0xbb000000 && offset < 0xbc000000)
-		return 1;
+	struct device_node *np = NULL;
+	const __be32 *prop;
+	int lenp;
+	u32 start, stop;
+
+	do {
+		np = of_find_node_with_property(np, "ranges");
+		if (!np)
+			continue;
+		prop = of_get_property(np, "ranges", &lenp);
+		if (lenp != 12)
+			continue;
+		start = be32_to_cpup(prop + 1);
+		stop = start + be32_to_cpup(prop + 2);
+		of_node_put(np);
+		if (offset >= start && offset < stop)
+			return 1;
+
+	} while (np);
 	return 0;
 }
 
