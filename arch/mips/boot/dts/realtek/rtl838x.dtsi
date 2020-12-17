@@ -1,0 +1,14 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR BSD-2-Clause
+
+&switch_bus {
+	syscon@40 {
+		compatible = "syscon", "simple-mfd";
+		reg = <0x40 0x4>;
+
+		sysreset: sysreset@0 {
+			compatible = "syscon-reboot";
+			offset = <0x0>;
+			mask = <0x1>;
+		};
+	};
+};
