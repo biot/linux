@@ -3,6 +3,7 @@
 /dts-v1/;
 
 #include "rtl83xx.dtsi"
+#include "rtl838x.dtsi"
 
 / {
 	model = "Cisco SG220-26";
