@@ -24,18 +24,11 @@ static void realtek_restart(char *command)
 	}
 }
 
-static void realtek_halt(void)
-{
-	printk("System halted.\n");
-	while(1);
-}
-
 void __init plat_mem_setup(void)
 {
 	set_io_port_base(KSEG1);
 
 	_machine_restart = realtek_restart;
-	_machine_halt = realtek_halt;
 }
 
 void __init plat_time_init(void)
