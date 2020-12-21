@@ -1055,6 +1055,16 @@ config NLM_XLP_BOARD
 
 endchoice
 
+if MACH_REALTEK
+choice
+	prompt "Realtek RTL838x/RTL839x-based switch"
+	optional
+
+	config DT_CISCO_SG220_26
+		bool "Cisco SG220-26"
+endchoice
+endif
+
 source "arch/mips/alchemy/Kconfig"
 source "arch/mips/ath25/Kconfig"
 source "arch/mips/ath79/Kconfig"
