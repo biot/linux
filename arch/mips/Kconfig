@@ -629,6 +629,7 @@ config RALINK
 
 config MACH_REALTEK
 	bool "Realtek RTL8380 based machines"
+	select MIPS_GENERIC
 	select DMA_NONCOHERENT
 	select IRQ_MIPS_CPU
 	select CSRC_R4K

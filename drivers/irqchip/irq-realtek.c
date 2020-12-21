@@ -13,7 +13,7 @@
 #include <linux/of_irq.h>
 #include <asm/cevt-r4k.h>
 
-#include <asm/mach-realtek/mach-realtek.h>
+#include <mach-realtek.h>
 
 /* Global Interrupt Mask Register */
 #define RTL8380_ICTL_GIMR	0x00
