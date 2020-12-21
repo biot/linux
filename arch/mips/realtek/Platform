@@ -1,6 +1,0 @@
-#
-# Realtek RTL8380 SoCs
-#
-platform-$(CONFIG_MACH_REALTEK) += realtek/
-cflags-$(CONFIG_MACH_REALTEK)   += -I$(srctree)/arch/mips/include/asm/mach-realtek/
-load-$(CONFIG_MACH_REALTEK)     += 0xffffffff80000000
