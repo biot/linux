@@ -22,8 +22,9 @@ static char model_name[REALTEK_SOC_NAME_MAX_LEN] = "Unknown Realtek";
 #define RTL8380_MODEL_EXT_VERSION_REG	0x00D0
 
 #define RTL8390_MODEL_NAME_INFO_REG	0x0FF0
-#define RTL9300_MODEL_NAME_INFO_REG	0x4
+#define RTL9300_MODEL_NAME_INFO_REG	0x0004
 #define RTL9310_MODEL_NAME_INFO_REG	RTL9300_MODEL_NAME_INFO_REG
+
 
 static inline int realtek_soc_family(uint32_t model)
 {
@@ -45,7 +46,7 @@ static void __iomem *realtek_of_iobase(struct device_node *np, int offset)
 	return base;
 }
 
-static void __init realtek_read_soc_info(struct device_node *np,
+static int __init realtek_read_soc_info(struct device_node *np,
 	int soc_compatible, struct realtek_soc_info *soc_info)
 {
 	void __iomem *base;
@@ -58,8 +59,8 @@ static void __init realtek_read_soc_info(struct device_node *np,
 
 	base = realtek_of_iobase(np, 0);
 	if (IS_ERR(base)) {
-		pr_err("failed to remap switch-bus");
-		return;
+		pr_err("failed to remap switch-bus\n");
+		return 1;
 	}
 
 	switch (soc_compatible) {
@@ -82,13 +83,14 @@ static void __init realtek_read_soc_info(struct device_node *np,
 		max_letters = 2;
 		break;
 	default:
-		return;
+		pr_err("unknown SoC compatible string\n");
+		return 1;
 	}
 
 	if (soc_compatible != realtek_soc_family(model)) {
-		pr_err("SoC family (%04x) does not match expected value (%04x)",
+		pr_err("SoC family (%04x) does not match expected value (%04x)\n",
 			realtek_soc_family(model), soc_compatible);
-		return;
+		return 1;
 	}
 
 	soc_info->family = realtek_soc_family(model);
@@ -109,6 +111,8 @@ static void __init realtek_read_soc_info(struct device_node *np,
 		is_engineering_sample ? "-ES" : "");
 
 	soc_info->name = model_name;
+
+	return 0;
 }
 
 static const struct of_device_id of_realtek_soc_match[] = {
@@ -135,6 +139,7 @@ static int __init realtek_init(void)
 {
 	const struct of_device_id *match;
 	struct device_node *np_bus;
+	int ret;
 
 	/* uart0 */
 	setup_8250_early_printk_port(0xb8002000, 2, 0);
@@ -142,15 +147,22 @@ static int __init realtek_init(void)
 	soc_info.name = model_name;
 
 	match = of_match_node(of_realtek_soc_match, of_root);
-	np_bus = of_find_node_by_name(of_root, "switch-bus");
-	if (match && np_bus)
-		realtek_read_soc_info(np_bus, (int) match->data, &soc_info);
+	if (!match)
+		panic("no valid SoC compatible string found\n");
 
+	np_bus = of_find_node_by_name(of_root, "switch-bus");
+	if (!np_bus)
+		panic("no switch-bus node found\n");
+
+	if (match && np_bus)
+		ret = realtek_read_soc_info(np_bus, (int) match->data, &soc_info);
 	of_node_put(np_bus);
+	if (ret)
+		panic("unable to boot system\n");
 
 	pr_info("SoC is %s\n", soc_info.name);
 
-	return true;
+	return 0;
 }
 
 early_initcall(realtek_init);
