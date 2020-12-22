@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+if MACH_REALTEK
+
+config REALTEK_CHIPID
+	bool "Realtek switch SoC chip ID"
+	default MACH_REALTEK
+	select MFD_SYSCON
+	select REGMAP
+	select SOC_BUS
+	help
+	  Support Realtek switch SoC identification
+
+endif
