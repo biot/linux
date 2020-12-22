@@ -31,5 +31,11 @@
 			offset = <0x0>;
 			mask = <0x1>;
 		};
+
+	};
+
+	chipid@d0 {
+		compatible = "realtek,rtl8380-chipid";
+		reg = <0xd0 0x10>;
 	};
 };
