@@ -15,14 +15,6 @@ struct realtek_soc_info {
 	unsigned int family;
 };
 
-/* High 16 bits of MODEL_NAME_INFO register */
-#define RTL8389_FAMILY_ID		0x8389
-#define RTL8328_FAMILY_ID		0x8328
-#define RTL8390_FAMILY_ID		0x8390
-#define RTL8350_FAMILY_ID		0x8350
-#define RTL8380_FAMILY_ID		0x8380
-#define RTL8330_FAMILY_ID		0x8330
-
 /* Interrupt numbers/bits */
 #define RTL8380_IRQ_UART0		31
 #define RTL8380_IRQ_UART1		30
@@ -92,12 +84,6 @@ struct realtek_soc_info {
 	(RTL8380_IRQ_CASCADE_SWCORE	<< 16))
 #define RTL8380_IRR2_SETTING	0
 #define RTL8380_IRR3_SETTING	0
-
-
-// TODO: move to DT
-#define RTL8380_SWITCH_BASE		((volatile void *) 0xBB000000)
-#define RTL8380_MODEL_NAME_INFO		(RTL8380_SWITCH_BASE + 0x00D4)
-#define RTL8390_MODEL_NAME_INFO		(RTL8380_SWITCH_BASE + 0x0FF0)
 
 /* Used to detect address length pin strapping on RTL833x/RTL838x */
 #define RTL8380_INT_RW_CTRL		(RTL8380_SWITCH_BASE + 0x58)
