@@ -11,6 +11,10 @@ static inline int is_rtl8380_internal_registers(phys_addr_t offset)
 	int lenp;
 	u32 start, stop;
 
+	if (offset & BIT(31))
+		/* already mapped into register space */
+		return 1;
+
 	do {
 		np = of_find_node_with_property(np, "ranges");
 		if (!np)
