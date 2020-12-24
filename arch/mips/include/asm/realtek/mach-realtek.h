@@ -9,12 +9,6 @@
 #ifndef _MACH_REALTEK_H_
 #define _MACH_REALTEK_H_
 
-struct realtek_soc_info {
-	unsigned char *name;
-	unsigned int id;
-	unsigned int family;
-};
-
 /* Interrupt numbers/bits */
 #define RTL8380_IRQ_UART0		31
 #define RTL8380_IRQ_UART1		30
