@@ -6,12 +6,11 @@
  * Copyright (C) 2020 John Crispin <john@phrozen.org>
  */
 
+#include <linux/of_irq.h>
 #include <linux/irqchip.h>
 #include <linux/spinlock.h>
 #include <linux/of_address.h>
-#include <asm/irq_cpu.h>
-#include <linux/of_irq.h>
-#include <asm/cevt-r4k.h>
+#include <linux/irqchip/chained_irq.h>
 
 #include <mach-realtek.h>
 
@@ -20,8 +19,7 @@
 static DEFINE_RAW_SPINLOCK(irq_lock);
 static void __iomem *realtek_ictl_base;
 
-
-static void realtek_ictl_enable_irq(struct irq_data *i)
+static void realtek_ictl_unmask_irq(struct irq_data *i)
 {
 	unsigned long flags;
 	u32 value;
@@ -35,7 +33,7 @@ static void realtek_ictl_enable_irq(struct irq_data *i)
 	raw_spin_unlock_irqrestore(&irq_lock, flags);
 }
 
-static void realtek_ictl_disable_irq(struct irq_data *i)
+static void realtek_ictl_mask_irq(struct irq_data *i)
 {
 	unsigned long flags;
 	u32 value;
@@ -51,12 +49,8 @@ static void realtek_ictl_disable_irq(struct irq_data *i)
 
 static struct irq_chip realtek_ictl_irq = {
 	.name = "rtl8380",
-	.irq_enable = realtek_ictl_enable_irq,
-	.irq_disable = realtek_ictl_disable_irq,
-	.irq_ack = realtek_ictl_disable_irq,
-	.irq_mask = realtek_ictl_disable_irq,
-	.irq_unmask = realtek_ictl_enable_irq,
-	.irq_eoi = realtek_ictl_enable_irq,
+	.irq_mask = realtek_ictl_mask_irq,
+	.irq_unmask = realtek_ictl_unmask_irq,
 };
 
 static int intc_map(struct irq_domain *d, unsigned int irq, irq_hw_number_t hw)
@@ -73,42 +67,21 @@ static const struct irq_domain_ops irq_domain_ops = {
 
 static void realtek_irq_dispatch(struct irq_desc *desc)
 {
-	unsigned int pending = readl(REG(RTL8380_ICTL_GIMR)) & readl(REG(RTL8380_ICTL_GISR));
-
-	if (pending) {
-		struct irq_domain *domain = irq_desc_get_handler_data(desc);
-		generic_handle_irq(irq_find_mapping(domain, __ffs(pending)));
-	} else {
-		spurious_interrupt();
-	}
-}
-
-asmlinkage void plat_irq_dispatch(void)
-{
+	struct irq_chip *chip = irq_desc_get_chip(desc);
+	struct irq_domain *domain;
 	unsigned int pending;
 
-	pending =  read_c0_cause() & read_c0_status() & ST0_IM;
-
-	if (pending & CAUSEF_IP7)
-		do_IRQ(RTL8380_CPU_IRQ_COUNTER);
-
-	else if (pending & CAUSEF_IP6)
-		do_IRQ(RTL8380_CPU_IRQ_EXTERNAL);
-
-	else if (pending & CAUSEF_IP5)
-		do_IRQ(RTL8380_CPU_IRQ_SHARED1);
-
-	else if (pending & CAUSEF_IP4)
-		do_IRQ(RTL8380_CPU_IRQ_SWITCH);
-
-	else if (pending & CAUSEF_IP3)
-		do_IRQ(RTL8380_CPU_IRQ_UART);
-
-	else if (pending & CAUSEF_IP2)
-		do_IRQ(RTL8380_CPU_IRQ_SHARED0);
-
-	else
+	chained_irq_enter(chip, desc);
+	pending = readl(REG(RTL8380_ICTL_GIMR)) & readl(REG(RTL8380_ICTL_GISR));
+	if (unlikely(!pending)) {
 		spurious_interrupt();
+		goto out;
+	}
+	domain = irq_desc_get_handler_data(desc);
+	generic_handle_irq(irq_find_mapping(domain, __ffs(pending)));
+
+out:
+	chained_irq_exit(chip, desc);
 }
 
 static int __init rtl8380_of_init(struct device_node *node, struct device_node *parent)
@@ -117,8 +90,10 @@ static int __init rtl8380_of_init(struct device_node *node, struct device_node *
 
 	domain = irq_domain_add_simple(node, 32, 0,
 				       &irq_domain_ops, NULL);
-        irq_set_chained_handler_and_data(2, realtek_irq_dispatch, domain);
-        irq_set_chained_handler_and_data(5, realtek_irq_dispatch, domain);
+	irq_set_chained_handler_and_data(2, realtek_irq_dispatch, domain);
+	irq_set_chained_handler_and_data(3, realtek_irq_dispatch, domain);
+	irq_set_chained_handler_and_data(4, realtek_irq_dispatch, domain);
+	irq_set_chained_handler_and_data(5, realtek_irq_dispatch, domain);
 
 	realtek_ictl_base = of_iomap(node, 0);
 	if (!realtek_ictl_base)
@@ -127,20 +102,18 @@ static int __init rtl8380_of_init(struct device_node *node, struct device_node *
 	/* Disable all cascaded interrupts */
 	writel(0, REG(RTL8380_ICTL_GIMR));
 
-	/* Set up interrupt routing */
-	writel(RTL8380_IRR0_SETTING, REG(RTL8380_IRR0));
-	writel(RTL8380_IRR1_SETTING, REG(RTL8380_IRR1));
-	writel(RTL8380_IRR2_SETTING, REG(RTL8380_IRR2));
-	writel(RTL8380_IRR3_SETTING, REG(RTL8380_IRR3));
+	/*
+	 * Set up interrupt routing - this defines the mapping between
+	 * cpu and realtek interrupt controller. These values are static
+	 * and taken from the SDK code.
+	 */
+	writel(RTL8380_ICTL_IRR0_SETTING, REG(RTL8380_ICTL_IRR0));
+	writel(RTL8380_ICTL_IRR1_SETTING, REG(RTL8380_ICTL_IRR1));
+	writel(RTL8380_ICTL_IRR2_SETTING, REG(RTL8380_ICTL_IRR2));
+	writel(RTL8380_ICTL_IRR3_SETTING, REG(RTL8380_ICTL_IRR3));
 
 	/* Clear timer interrupt */
 	write_c0_compare(0);
-
-	/* Enable all CPU interrupts */
-	write_c0_status(read_c0_status() | ST0_IM);
-
-	/* Enable timer0 and uart0 interrupts */
-	writel(BIT(RTL8380_IRQ_TC0) | BIT(RTL8380_IRQ_UART0), REG(RTL8380_ICTL_GIMR));
 
 	return 0;
 }
