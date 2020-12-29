@@ -19,6 +19,7 @@
 #define RTL8380_MODEL_NAME		0x04
 #define RTL8380_CHIP_INFO		0x08
 #define RTL8380_MODEL_INFO		0x0c
+#define RTL8380_MODE_DEFINE_CTRL	0x00
 
 #define RTL8390_MODEL_NAME		0x00
 #define RTL8390_CHIP_INFO		0x04
@@ -79,8 +80,10 @@ static inline bool rtl8380_read_modelinfo(struct device *dev,
 	struct regmap *regmap, int chip_info_base, int *model,
 	int *chip_rev, bool *is_engineering_sample)
 {
-	int err, reg_rw_protect;
+	int err, reg_rw_protect, reg_mode_define;
 	const __be32 *offset;
+	bool result;
+	u32 mode_define, val_model;
 
 	/* FIXME restore register value */
 	offset = of_get_address(dev->of_node, 1, NULL, NULL);
@@ -94,7 +97,8 @@ static inline bool rtl8380_read_modelinfo(struct device *dev,
 		    return err;
 	}
 
-	err = regmap_read(regmap, chip_info_base + RTL8380_MODEL_NAME, model);
+	err = regmap_read(regmap, chip_info_base + RTL8380_MODEL_NAME,
+		&val_model);
 	if (err)
 		return err;
 
@@ -104,11 +108,32 @@ static inline bool rtl8380_read_modelinfo(struct device *dev,
 		return err;
 
 	/*
-	 * FIXME Correct detection of RTL8381M
-	 * BIT(23) in register 0x1024 (RTL8380_MODE_DEFINE_CTL)
-	 * indicates if the SoC is RTL8380M (1) or RTL8381M (0)
-	 * The RTL8381M has only one QSGMII and two SGMII phys
+	 * BIT(23) in RTL8380_MODE_DEFINE_CTL indicates if the SoC is
+	 * RTL8380M (1) or RTL8381M (0). The RTL8381M has only one QSGMII
+	 * and two SGMII phys. To be able to read the bit, the READ_ENABLE
+	 * bit must first be set in the register. If enabling this bit
+	 * didn't work, just assume this isn't an RTL8381.
+	 * Correct the SoC-ID if the detection heuristics show this is an
+	 * RTL8381M.
 	 */
+	offset = of_get_address(dev->of_node, 2, NULL, NULL);
+	if (!offset) {
+		dev_warn(dev, "MODE_DEFINE_CTL register base address found\n");
+	}
+	else if (realtek_soc_id(val_model) == 0x8380) {
+		reg_mode_define = __be32_to_cpu(*offset);
+		regmap_set_bits(regmap, reg_mode_define, BIT(31));
+		result = regmap_test_bits(regmap, reg_mode_define, BIT(31));
+		result = result && !regmap_test_bits(regmap, reg_mode_define,
+			BIT(23));
+		regmap_read(regmap, reg_mode_define, &mode_define);
+		regmap_clear_bits(regmap, reg_mode_define, BIT(31));
+
+		if (result)
+			val_model = (val_model & 0xffff) | (0x8381 << 16);
+	}
+
+	*model = val_model;
 
 	return 0;
 }
