@@ -646,6 +646,13 @@ config SPI_RB4XX
 	help
 	  SPI controller driver for the Mikrotik RB4xx series boards.
 
+config SPI_REALTEK
+	bool "Realtek SPI controller"
+	depends on MACH_REALTEK
+	help
+	  This driver supports the SPI controller used for the bootflash
+	  in the Realtek RTL83xx series SoCs.
+
 config SPI_RPCIF
 	tristate "Renesas RPC-IF SPI driver"
 	depends on RENESAS_RPCIF

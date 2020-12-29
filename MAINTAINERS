@@ -15048,6 +15048,12 @@ F:	Documentation/devicetree/bindings/net/dsa/realtek-smi.txt
 F:	drivers/net/dsa/realtek-smi*
 F:	drivers/net/dsa/rtl83*
 
+REALTEK RTL83XX SPI DRIVER
+M:	Bert Vermeulen <bert@biot.com>
+M:	Birger Koblitz <mail@birger-koblitz.de>
+S:	Maintained
+F:	drivers/spi/spi-realtek.c
+
 REALTEK WIRELESS DRIVER (rtlwifi family)
 M:	Ping-Ke Shih <pkshih@realtek.com>
 L:	linux-wireless@vger.kernel.org
