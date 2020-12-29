@@ -35,7 +35,8 @@
 
 		chipid@d0 {
 			compatible = "realtek,rtl8380-chipid";
-			reg = <0xd0 0x10>;
+			reg = <0xd0 0x10>, /* chip info registers */
+			      <0x58 0x4>; /* register unlock */
 		};
 	};
 };
