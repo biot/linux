@@ -1,0 +1,81 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR BSD-2-Clause
+
+/dts-v1/;
+
+#include "rtl83xx.dtsi"
+#include "rtl838x.dtsi"
+
+/ {
+	model = "Cisco SG220-26";
+	compatible = "cisco,sg220-26", "realtek,rtl8382-soc";
+
+	chosen {
+		stdout-path = "serial0:9600n8";
+		bootargs = "earlycon console=ttyS0,9600";
+	};
+
+	memory@0 {
+		device_type = "memory";
+		reg = <0x0 0x8000000>;
+	};
+};
+
+&uart0 {
+	status = "okay";
+};
+
+&spi {
+	status = "okay";
+
+	flash@0 {
+		compatible = "jedec,spi-nor";
+		spi-max-frequency = <10000000>;
+		reg = <0>;
+		m25p,fast-read;
+		broken-flash-reset;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			loader: partition@0 {
+				label = "boot";
+				reg = <0x0 0x80000>;
+				read-only;
+			};
+
+			bdinfo: partition@80000 {
+				label = "bdinfo";
+				reg = <0x80000 0x10000>;
+				read-only;
+			};
+
+			sysinfo: partition@90000 {
+				label = "sysinfo";
+				reg = <0x90000 0x10000>;
+				read-only;
+			};
+
+			jffs2_cfg: partition@a0000 {
+				label = "jffs2 cfg";
+				reg = <0xa0000 0x400000>;
+			};
+
+			jffs2_log: partition@4a0000 {
+				label = "jffs2 log";
+				reg = <0x4a0000 0x100000>;
+			};
+
+			runtime: partition@5a0000 {
+				label = "runtime";
+				reg = <0x5a0000 0xd30000>;
+			};
+
+			runtime2: partition@12d0000 {
+				label = "runtime2";
+				reg = <0x12d0000 0xd30000>;
+			};
+		};
+	};
+};
