@@ -174,7 +174,7 @@ err_soc_dev:
 
 static struct platform_driver realtek_chipid_driver = {
 	.driver = {
-		.name = "realtek-chipid",
+		.name = "realtek-rtl-chipid",
 		.of_match_table = of_realtek_chipid_match
 	},
 	.probe = realtek_chipinfo_probe

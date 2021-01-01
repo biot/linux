@@ -1,8 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
-#ifndef _RTL8380_IOREMAP_H_
-#define _RTL8380_IOREMAP_H_
-
-#include <linux/of.h>
+#ifndef _REALTEK_RTL_IOREMAP_H_
+#define _REALTEK_RTL_IOREMAP_H_
 
 static inline int is_rtl8380_internal_registers(phys_addr_t offset)
 {
@@ -45,4 +43,4 @@ static inline int plat_iounmap(const volatile void __iomem *addr)
 	return is_rtl8380_internal_registers((unsigned long)addr);
 }
 
-#endif /* _RTL8380_IOREMAP_H_ */
+#endif /* _REALTEK_RTL_IOREMAP_H_ */
