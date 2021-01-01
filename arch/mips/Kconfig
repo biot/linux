@@ -627,8 +627,8 @@ config RALINK
 	select ARCH_HAS_RESET_CONTROLLER
 	select RESET_CONTROLLER
 
-config MACH_REALTEK
-	bool "Realtek RTL8380 based machines"
+config MACH_REALTEK_RTL
+	bool "Realtek RTL838x/RTL839x based machines"
 	select MIPS_GENERIC
 	select DMA_NONCOHERENT
 	select IRQ_MIPS_CPU
@@ -1055,7 +1055,7 @@ config NLM_XLP_BOARD
 
 endchoice
 
-if MACH_REALTEK
+if MACH_REALTEK_RTL
 choice
 	prompt "Realtek RTL838x/RTL839x-based switch"
 	optional

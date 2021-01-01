@@ -26,9 +26,9 @@ static void realtek_ictl_unmask_irq(struct irq_data *i)
 
 	raw_spin_lock_irqsave(&irq_lock, flags);
 
-	value = readl(REG(RTL8380_ICTL_GIMR));
+	value = readl(REG(RTL_ICTL_GIMR));
 	value |= BIT(i->hwirq);
-	writel(value, REG(RTL8380_ICTL_GIMR));
+	writel(value, REG(RTL_ICTL_GIMR));
 
 	raw_spin_unlock_irqrestore(&irq_lock, flags);
 }
@@ -40,15 +40,15 @@ static void realtek_ictl_mask_irq(struct irq_data *i)
 
 	raw_spin_lock_irqsave(&irq_lock, flags);
 
-	value = readl(REG(RTL8380_ICTL_GIMR));
+	value = readl(REG(RTL_ICTL_GIMR));
 	value &= ~BIT(i->hwirq);
-	writel(value, REG(RTL8380_ICTL_GIMR));
+	writel(value, REG(RTL_ICTL_GIMR));
 
 	raw_spin_unlock_irqrestore(&irq_lock, flags);
 }
 
 static struct irq_chip realtek_ictl_irq = {
-	.name = "rtl8380",
+	.name = "realtek-rtl-intc",
 	.irq_mask = realtek_ictl_mask_irq,
 	.irq_unmask = realtek_ictl_unmask_irq,
 };
@@ -72,7 +72,7 @@ static void realtek_irq_dispatch(struct irq_desc *desc)
 	unsigned int pending;
 
 	chained_irq_enter(chip, desc);
-	pending = readl(REG(RTL8380_ICTL_GIMR)) & readl(REG(RTL8380_ICTL_GISR));
+	pending = readl(REG(RTL_ICTL_GIMR)) & readl(REG(RTL_ICTL_GISR));
 	if (unlikely(!pending)) {
 		spurious_interrupt();
 		goto out;
@@ -84,7 +84,7 @@ out:
 	chained_irq_exit(chip, desc);
 }
 
-static int __init rtl8380_of_init(struct device_node *node, struct device_node *parent)
+static int __init realtek_rtl_of_init(struct device_node *node, struct device_node *parent)
 {
 	struct irq_domain *domain;
 
@@ -100,17 +100,17 @@ static int __init rtl8380_of_init(struct device_node *node, struct device_node *
 		return -ENXIO;
 
 	/* Disable all cascaded interrupts */
-	writel(0, REG(RTL8380_ICTL_GIMR));
+	writel(0, REG(RTL_ICTL_GIMR));
 
 	/*
 	 * Set up interrupt routing - this defines the mapping between
 	 * cpu and realtek interrupt controller. These values are static
 	 * and taken from the SDK code.
 	 */
-	writel(RTL8380_ICTL_IRR0_SETTING, REG(RTL8380_ICTL_IRR0));
-	writel(RTL8380_ICTL_IRR1_SETTING, REG(RTL8380_ICTL_IRR1));
-	writel(RTL8380_ICTL_IRR2_SETTING, REG(RTL8380_ICTL_IRR2));
-	writel(RTL8380_ICTL_IRR3_SETTING, REG(RTL8380_ICTL_IRR3));
+	writel(RTL_ICTL_IRR0_SETTING, REG(RTL_ICTL_IRR0));
+	writel(RTL_ICTL_IRR1_SETTING, REG(RTL_ICTL_IRR1));
+	writel(RTL_ICTL_IRR2_SETTING, REG(RTL_ICTL_IRR2));
+	writel(RTL_ICTL_IRR3_SETTING, REG(RTL_ICTL_IRR3));
 
 	/* Clear timer interrupt */
 	write_c0_compare(0);
@@ -118,4 +118,4 @@ static int __init rtl8380_of_init(struct device_node *node, struct device_node *
 	return 0;
 }
 
-IRQCHIP_DECLARE(realtek_rtl8380_intc, "realtek,rtl8380-intc", rtl8380_of_init);
+IRQCHIP_DECLARE(realtek_rtl_intc, "realtek,rtl-intc", realtek_rtl_of_init);

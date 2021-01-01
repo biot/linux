@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 %YAML 1.2
 ---
-$id: http://devicetree.org/schemas/interrupt-controller/realtek,rtl8380-intc.yaml#
+$id: http://devicetree.org/schemas/interrupt-controller/realtek,rtl-intc.yaml#
 $schema: http://devicetree.org/meta-schemas/core.yaml#
 
-title: Realtek RTL8380 SoC interrupt controller devicetree bindings
+title: Realtek RTL SoC interrupt controller devicetree bindings
 
 maintainers:
   - Birger Koblitz <mail@birger-koblitz.de>
@@ -13,7 +13,7 @@ maintainers:
 
 properties:
   compatible:
-    const: realtek,rtl8380-intc
+    const: realtek,rtl-intc
 
   "#interrupt-cells":
     const: 1
@@ -37,7 +37,7 @@ additionalProperties: false
 examples:
   - |
     intc: interrupt-controller@3000 {
-      compatible = "realtek,rtl8380-intc";
+      compatible = "realtek,rtl-intc";
       #interrupt-cells = <1>;
       interrupt-controller;
       reg = <0x3000 0x20>;

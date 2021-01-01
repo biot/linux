@@ -67,7 +67,7 @@
 		};
 
 		intc: interrupt-controller@3000 {
-			compatible = "realtek,rtl8380-intc";
+			compatible = "realtek,rtl-intc";
 			#interrupt-cells = <1>;
 			interrupt-controller;
 			reg = <0x3000 0x20>;
