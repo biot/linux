@@ -24,7 +24,7 @@
 	status = "okay";
 };
 
-&spiflash {
+&spi {
 	status = "okay";
 
 	flash@0 {
