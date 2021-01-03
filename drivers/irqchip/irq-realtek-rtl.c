@@ -138,7 +138,7 @@ static int __init map_interrupts(struct device_node *node)
 		if (cpu_int > 7)
 			return -EINVAL;
 
-		regs[soc_int * 4 / 32] |= cpu_int << soc_int * 4 % 32;
+		regs[(soc_int * 4) / 32] |= cpu_int << (soc_int * 4) % 32;
 		imap += 3;
 	}
 
