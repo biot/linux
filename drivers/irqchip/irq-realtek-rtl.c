@@ -14,6 +14,16 @@
 
 #include <mach-realtek.h>
 
+/* Global Interrupt Mask Register */
+#define RTL_ICTL_GIMR		0x00
+/* Global Interrupt Status Register */
+#define RTL_ICTL_GISR		0x04
+/* Interrupt Routing Registers */
+#define RTL_ICTL_IRR0		0x08
+#define RTL_ICTL_IRR1		0x0c
+#define RTL_ICTL_IRR2		0x10
+#define RTL_ICTL_IRR3		0x14
+
 #define REG(x)		(realtek_ictl_base + x)
 
 static DEFINE_RAW_SPINLOCK(irq_lock);
