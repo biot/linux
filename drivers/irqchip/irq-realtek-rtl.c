@@ -167,11 +167,6 @@ static int __init realtek_rtl_of_init(struct device_node *node, struct device_no
 	/* Disable all cascaded interrupts */
 	writel(0, REG(RTL_ICTL_GIMR));
 
-	/*
-	 * Set up interrupt routing - this defines the mapping between
-	 * cpu and realtek interrupt controller. These values are static
-	 * and taken from the SDK code.
-	 */
 	ret = map_interrupts(node);
 	if (ret) {
 		pr_err("invalid interrupt map\n");
