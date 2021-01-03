@@ -94,9 +94,64 @@ out:
 	chained_irq_exit(chip, desc);
 }
 
+/*
+ * SoC interrupts are cascaded to MIPS CPU interrupts according to the
+ * interrupt-map in the device tree. Each SoC interrupt gets 4 bits for
+ * the CPU interrupt in an Interrupt Routing Register. Max 32 SoC interrupts
+ * thus go into 4 IRRs.
+ */
+static int __init map_interrupts(struct device_node *node)
+{
+	struct device_node *cpu_ictl;
+	const __be32 *imap;
+	u32 imaplen, soc_int, cpu_int, tmp, regs[4];
+	int ret, i, irr_regs[] = {
+		RTL_ICTL_IRR3,
+		RTL_ICTL_IRR2,
+		RTL_ICTL_IRR1,
+		RTL_ICTL_IRR0,
+	};
+
+	ret = of_property_read_u32(node, "#address-cells", &tmp);
+	if (ret || tmp)
+		return -EINVAL;
+
+	imap = of_get_property(node, "interrupt-map", &imaplen);
+	if (!imap || imaplen % 3)
+		return -EINVAL;
+
+	memset(regs, 0, sizeof(regs));
+	for (i = 0; i < imaplen; i += 3 * sizeof(u32)) {
+		soc_int = be32_to_cpup(imap);
+		if (soc_int > 31)
+			return -EINVAL;
+
+		cpu_ictl = of_find_node_by_phandle(be32_to_cpup(imap + 1));
+		if (!cpu_ictl)
+			return -EINVAL;
+		ret = of_property_read_u32(cpu_ictl, "#interrupt-cells", &tmp);
+		if (ret || tmp != 1)
+			return -EINVAL;
+		of_node_put(cpu_ictl);
+
+		cpu_int = be32_to_cpup(imap + 2);
+		if (cpu_int > 7)
+			return -EINVAL;
+
+		regs[soc_int * 4 / 32] |= cpu_int << soc_int * 4 % 32;
+		imap += 3;
+	}
+
+	for (i = 0; i < 4; i++)
+		writel(regs[i], REG(irr_regs[i]));
+
+	return 0;
+}
+
 static int __init realtek_rtl_of_init(struct device_node *node, struct device_node *parent)
 {
 	struct irq_domain *domain;
+	int ret;
 
 	domain = irq_domain_add_simple(node, 32, 0,
 				       &irq_domain_ops, NULL);
@@ -117,10 +172,11 @@ static int __init realtek_rtl_of_init(struct device_node *node, struct device_no
 	 * cpu and realtek interrupt controller. These values are static
 	 * and taken from the SDK code.
 	 */
-	writel(RTL_ICTL_IRR0_SETTING, REG(RTL_ICTL_IRR0));
-	writel(RTL_ICTL_IRR1_SETTING, REG(RTL_ICTL_IRR1));
-	writel(RTL_ICTL_IRR2_SETTING, REG(RTL_ICTL_IRR2));
-	writel(RTL_ICTL_IRR3_SETTING, REG(RTL_ICTL_IRR3));
+	ret = map_interrupts(node);
+	if (ret) {
+		pr_err("invalid interrupt map\n");
+		return ret;
+	}
 
 	/* Clear timer interrupt */
 	write_c0_compare(0);
