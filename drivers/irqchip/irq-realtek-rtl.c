@@ -12,8 +12,6 @@
 #include <linux/of_address.h>
 #include <linux/irqchip/chained_irq.h>
 
-#include <mach-realtek.h>
-
 /* Global Interrupt Mask Register */
 #define RTL_ICTL_GIMR		0x00
 /* Global Interrupt Status Register */
