@@ -71,8 +71,8 @@
 			reg = <0x3000 0x20>;
 			interrupt-controller;
 			#interrupt-cells = <1>;
-			#address-cells = <0>;
 
+			#address-cells = <0>;
 			interrupt-map =
 				<31 &cpuintc 2>, /* UART0 */
 				<30 &cpuintc 1>, /* UART1 */
