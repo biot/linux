@@ -26,11 +26,20 @@ properties:
 
   interrupt-controller: true
 
+  "#address-cells":
+    const: 0
+
+  interrupt-map:
+    maxItems: 24
+    description: Describes mapping from SoC interrupts to CPU interrupts
+
 required:
   - compatible
   - reg
   - "#interrupt-cells"
   - interrupt-controller
+  - "#address-cells"
+  - interrupt-map
 
 additionalProperties: false
 
@@ -41,4 +50,8 @@ examples:
       #interrupt-cells = <1>;
       interrupt-controller;
       reg = <0x3000 0x20>;
+      #address-cells = <0>;
+      interrupt-map =
+              <31 &cpuintc 2>,
+              <30 &cpuintc 1>;
     }
