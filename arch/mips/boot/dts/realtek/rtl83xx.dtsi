@@ -20,7 +20,7 @@
 		compatible = "simple-bus";
 		#address-cells = <1>;
 		#size-cells = <1>;
-		ranges = <0x0 0xb8000000 0x10000>;
+		ranges = <0x0 0x18000000 0x10000>;
 
 		spi: spi@1200 {
 			compatible = "realtek,rtl-spi";
@@ -95,6 +95,6 @@
 		compatible = "simple-bus";
 		#address-cells = <1>;
 		#size-cells = <1>;
-		ranges = <0x0 0xbb000000 0x10000>;
+		ranges = <0x0 0x1b000000 0x10000>;
 	};
 };
