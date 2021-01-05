@@ -20,6 +20,18 @@
 	};
 };
 
+&soc {
+	spi: spi@1200 {
+		compatible = "realtek,rtl838x-spi";
+		reg = <0x1200 0x100>;
+
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		status = "disabled";
+	};
+};
+
 &switch_bus {
 	syscon@40 {
 		compatible = "syscon", "simple-mfd";

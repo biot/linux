@@ -20,6 +20,18 @@
 	};
 };
 
+&soc {
+	spi: spi@1200 {
+		compatible = "realtek,rtl839x-spi";
+		reg = <0x1200 0x100>;
+
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		status = "disabled";
+	};
+};
+
 &switch_bus {
 	chipid@d0 {
 		compatible = "realtek,rtl8390-chipid";
