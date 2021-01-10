@@ -1,5 +1,18 @@
 // SPDX-License-Identifier: GPL-2.0-or-later OR BSD-2-Clause
 
+&soc {
+	spi: spi@1200 {
+		compatible = "realtek,rtl8382-spi";
+		reg = <0x1200 0x100>;
+
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		status = "disabled";
+	};
+};
+
+/*
 &ethernet0 {
 	mdio-bus {
 		compatible = "realtek,rtl83xx-mdio";
@@ -41,3 +54,4 @@
 		};
 	};
 };
+*/

@@ -4,6 +4,7 @@
 
 #include "rtl83xx.dtsi"
 #include "rtl838x.dtsi"
+#include "rtl8382.dtsi"
 
 / {
 	model = "Cisco SG220-26";
