@@ -30,7 +30,6 @@ properties:
     const: 0
 
   interrupt-map:
-    maxItems: 24
     description: Describes mapping from SoC interrupts to CPU interrupts
 
 required:
@@ -53,5 +52,6 @@ examples:
       #address-cells = <0>;
       interrupt-map =
               <31 &cpuintc 2>,
-              <30 &cpuintc 1>;
-    }
+              <30 &cpuintc 1>,
+              <29 &cpuintc 5>;
+    };
