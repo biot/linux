@@ -1,0 +1,50 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR BSD-2-Clause
+
+/dts-v1/;
+
+#include "rtl83xx.dtsi"
+#include "rtl839x.dtsi"
+#include "rtl8392.dtsi"
+
+/ {
+	model = "Edgecore ECS4100-12PH";
+	compatible = "edgecore,ecs4100-12ph", "realtek,rtl8392-soc";
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+		bootargs = "earlycon console=ttyS0,115200";
+	};
+
+	memory@0 {
+		device_type = "memory";
+		reg = <0x0 0x10000000>;
+	};
+};
+
+&uart0 {
+	status = "okay";
+};
+
+&spi {
+	status = "okay";
+
+	flash@0 {
+		compatible = "jedec,spi-nor";
+		spi-max-frequency = <10000000>;
+		reg = <0>;
+		m25p,fast-read;
+		broken-flash-reset;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			loader: partition@0 {
+				label = "boot";
+				reg = <0x0 0x1000000>;
+				read-only;
+			};
+		};
+	};
+};

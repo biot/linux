@@ -1063,6 +1063,9 @@ choice
 	config DT_CISCO_SG220_26
 		bool "Cisco SG220-26"
 
+	config DT_EDGECORE_ECS4100_12PH
+		bool "Edgecore ECS4100-12PH"
+
 	config DT_ZYXEL_GS1900_48HP
 		bool "Zyxel GS1900-48HP"
 endchoice
