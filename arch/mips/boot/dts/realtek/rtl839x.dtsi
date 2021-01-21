@@ -16,25 +16,13 @@
 	baseclk: baseclk {
 		compatible = "fixed-clock";
 		#clock-cells = <0>;
-		clock-frequency = <500000000>;
-	};
-};
-
-&soc {
-	spi: spi@1200 {
-		compatible = "realtek,rtl839x-spi";
-		reg = <0x1200 0x100>;
-
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		status = "disabled";
+		clock-frequency = <700000000>;
 	};
 };
 
 &switch_bus {
 	chipid@d0 {
 		compatible = "realtek,rtl8390-chipid";
-		reg = <0xd0 0x10>;
+		reg = <0xff0 0x8>;
 	};
 };
