@@ -172,7 +172,7 @@ static int realtek_read_modelinfo(struct device *dev, int family_id,
 		err = regmap_read(regmap, chip_info_base + RTL8390_MODEL_NAME,
 			&model);
 		chip_rev = (model >> 1) & 0x1f;
-		is_engineering_sample = !!chip_rev;
+		is_engineering_sample = chip_rev == 0;
 		break;
 	case REALTEK_SOC_COMPATIBLE_9300:
 	case REALTEK_SOC_COMPATIBLE_9310:
