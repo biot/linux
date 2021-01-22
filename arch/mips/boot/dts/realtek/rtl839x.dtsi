@@ -21,6 +21,18 @@
 };
 
 &switch_bus {
+	syscon@14 {
+		compatible = "syscon", "simple-mfd";
+		reg = <0x14 0x4>;
+
+		sysreset: sysreset@0 {
+			compatible = "syscon-reboot";
+			offset = <0x0>;
+			mask = <0xffffffff>;
+		};
+
+	};
+
 	chipid@d0 {
 		compatible = "realtek,rtl8390-chipid";
 		reg = <0xff0 0x8>;
