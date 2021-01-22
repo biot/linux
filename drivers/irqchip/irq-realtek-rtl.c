@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
- * Copyright (C) 2006-2012 Tony Wu <tonywu@realtek.com>
  * Copyright (C) 2020 Birger Koblitz <mail@birger-koblitz.de>
  * Copyright (C) 2020 Bert Vermeulen <bert@biot.com>
  * Copyright (C) 2020 John Crispin <john@phrozen.org>
@@ -98,7 +97,7 @@ out:
  * the CPU interrupt in an Interrupt Routing Register. Max 32 SoC interrupts
  * thus go into 4 IRRs.
  */
-static int __init map_interrupts(struct device_node *node)
+static int __init map_interrupts(struct device_node *node, struct irq_domain *domain)
 {
 	struct device_node *cpu_ictl;
 	const __be32 *imap;
@@ -109,6 +108,7 @@ static int __init map_interrupts(struct device_node *node)
 		RTL_ICTL_IRR1,
 		RTL_ICTL_IRR0,
 	};
+	u8 mips_irqs_set;
 
 	ret = of_property_read_u32(node, "#address-cells", &tmp);
 	if (ret || tmp)
@@ -118,6 +118,7 @@ static int __init map_interrupts(struct device_node *node)
 	if (!imap || imaplen % 3)
 		return -EINVAL;
 
+	mips_irqs_set = 0;
 	memset(regs, 0, sizeof(regs));
 	for (i = 0; i < imaplen; i += 3 * sizeof(u32)) {
 		soc_int = be32_to_cpup(imap);
@@ -136,6 +137,12 @@ static int __init map_interrupts(struct device_node *node)
 		if (cpu_int > 7)
 			return -EINVAL;
 
+		if (!(mips_irqs_set & BIT(cpu_int))) {
+			irq_set_chained_handler_and_data(cpu_int, realtek_irq_dispatch,
+							 domain);
+			mips_irqs_set |= BIT(cpu_int);
+		}
+
 		regs[(soc_int * 4) / 32] |= cpu_int << (soc_int * 4) % 32;
 		imap += 3;
 	}
@@ -151,13 +158,6 @@ static int __init realtek_rtl_of_init(struct device_node *node, struct device_no
 	struct irq_domain *domain;
 	int ret;
 
-	domain = irq_domain_add_simple(node, 32, 0,
-				       &irq_domain_ops, NULL);
-	irq_set_chained_handler_and_data(2, realtek_irq_dispatch, domain);
-	irq_set_chained_handler_and_data(3, realtek_irq_dispatch, domain);
-	irq_set_chained_handler_and_data(4, realtek_irq_dispatch, domain);
-	irq_set_chained_handler_and_data(5, realtek_irq_dispatch, domain);
-
 	realtek_ictl_base = of_iomap(node, 0);
 	if (!realtek_ictl_base)
 		return -ENXIO;
@@ -165,14 +165,14 @@ static int __init realtek_rtl_of_init(struct device_node *node, struct device_no
 	/* Disable all cascaded interrupts */
 	writel(0, REG(RTL_ICTL_GIMR));
 
-	ret = map_interrupts(node);
+	domain = irq_domain_add_simple(node, 32, 0,
+				       &irq_domain_ops, NULL);
+
+	ret = map_interrupts(node, domain);
 	if (ret) {
 		pr_err("invalid interrupt map\n");
 		return ret;
 	}
-
-	/* Clear timer interrupt */
-	write_c0_compare(0);
 
 	return 0;
 }
