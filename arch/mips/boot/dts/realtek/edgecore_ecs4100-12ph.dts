@@ -40,10 +40,32 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 
-			loader: partition@0 {
-				label = "boot";
-				reg = <0x0 0x1000000>;
+			uboot: partition@0 {
+				label = "uboot";
+				reg = <0x0 0x100000>;
 				read-only;
+			};
+
+			env: partition@100000 {
+				label = "env";
+				reg = <0x100000 0x80000>;
+				read-only;
+			};
+
+			hwinfo: partition@180000 {
+				label = "hwinfo";
+				reg = <0x180000 0x8000>;
+				read-only;
+			};
+
+			runtime: partition@200000 {
+				label = "runtime";
+				reg = <0x200000 0x500000>;
+			};
+
+			runtime2: partition@500000 {
+				label = "runtime2";
+				reg = <0x500000 0x2000000>;
 			};
 		};
 	};
