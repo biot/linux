@@ -24,6 +24,8 @@
 	syscon@0 {
 		compatible = "syscon", "simple-mfd";
 		reg = <0x0 0x1000>;
+		#address-cells = <1>;
+		#size-cells = <1>;
 
 		sysreset: sysreset@0 {
 			compatible = "syscon-reboot";
