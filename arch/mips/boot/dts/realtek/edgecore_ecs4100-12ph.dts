@@ -2,6 +2,8 @@
 
 /dts-v1/;
 
+#include <dt-bindings/leds/common.h>
+
 #include "rtl83xx.dtsi"
 #include "rtl839x.dtsi"
 #include "rtl8392.dtsi"
@@ -18,6 +20,20 @@
 	memory@0 {
 		device_type = "memory";
 		reg = <0x0 0x10000000>;
+	};
+};
+
+&switch_bus {
+	ext_io: ext-io@e4 {
+		compatible = "realtek,rtl8390-eio", "syscon";
+		reg = <0xe4 0x17c>;
+
+		led_sys: sys-led {
+			active-low;
+			color = <LED_COLOR_ID_GREEN>;
+			function = LED_FUNCTION_STATUS;
+			linux,default-trigger = "default-on";
+		};
 	};
 };
 
