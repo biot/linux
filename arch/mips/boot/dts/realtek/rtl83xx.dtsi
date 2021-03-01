@@ -81,7 +81,7 @@
 		};
 	};
 
-	switch_bus: switch-bus@bb000000 {
+	switch_bus: switch-bus@1b000000 {
 		compatible = "simple-bus";
 		#address-cells = <1>;
 		#size-cells = <1>;
